@@ -4,7 +4,7 @@
 - Market / city: US – Dallas, TX (East Dallas; Lakewood, Lake Highlands, Garland, Mesquite)
 - Languages: en
 - Live URL: https://torque-temper-demo.vercel.app
-- Repo: local only for now (git on `main`; push to the demos GitHub org once it's confirmed)
+- Repo: https://github.com/dbs-media-demos/torque-temper-demo
 - Folder: DBS Media Portfolio/Demo Websites/auto-repair
 - Stack: Next.js 16.3.6, React 19.2.8, Tailwind v4, GSAP 3 (ScrollTrigger, SplitText), Lenis
 - Palette: #0E0F11 asphalt, #1B1D20 graphite, #8A8781 concrete, #EFECE6 chalk, #FF5B1F signal (+ #A8340A signal ink); heat-tint micro-accent #D9B25F → #B46A3C → #6B4C8A → #2F5D9B
