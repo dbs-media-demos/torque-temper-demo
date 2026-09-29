@@ -174,7 +174,7 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
               )}
             >
               <span className="whitespace-nowrap md:whitespace-normal">{sym.label}</span>
-              <span className={clsx("font-mono text-[0.62rem] tracking-[0.1em]", i === idx ? "text-signal" : "text-chalk/40")}>{sym.code}</span>
+              <span className={clsx("font-mono text-[0.62rem] tracking-[0.1em]", i === idx ? "text-signal" : "text-chalk/60")}>{sym.code}</span>
             </button>
           ))}
         </div>

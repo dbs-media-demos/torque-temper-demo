@@ -41,8 +41,23 @@ export function Hero() {
   useEffect(() => {
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
     if (prefersReducedMotion() || conn?.saveData) return;
-    // Defer the video until the page is idle so it never competes with the LCP image.
     const start = () => setVideoOn(true);
+    // Phones: start the film on the first touch/scroll (or after 6 s) so it never competes with LCP.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      const events = ["touchstart", "scroll", "pointerdown"] as const;
+      const go = () => {
+        cleanup();
+        start();
+      };
+      const t = window.setTimeout(go, 6000);
+      const cleanup = () => {
+        window.clearTimeout(t);
+        events.forEach((e) => window.removeEventListener(e, go));
+      };
+      events.forEach((e) => window.addEventListener(e, go, { once: true, passive: true }));
+      return cleanup;
+    }
+    // Desktop: defer the video until the page is idle.
     const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
     if (w.requestIdleCallback) {
       const id = w.requestIdleCallback(start, { timeout: 2000 });

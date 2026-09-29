@@ -33,7 +33,7 @@ export function PageHero({
       {image && (
         <>
           <div className="absolute inset-0 [animation:hero-zoom_2.4s_var(--ease-out-expo)_both]">
-            <Image src={image} alt={imageAlt ?? ""} fill preload sizes="100vw" quality={70} className="object-cover" />
+            <Image src={image} alt={imageAlt ?? ""} fill loading="eager" fetchPriority="high" sizes="100vw" quality={70} className="object-cover" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-asphalt via-asphalt/70 to-asphalt/45" />
           <div className="absolute inset-0 bg-gradient-to-r from-asphalt/80 via-asphalt/20 to-transparent" />

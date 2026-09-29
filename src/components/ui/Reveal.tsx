@@ -2,7 +2,7 @@
 
 import { useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
 import clsx from "clsx";
-import { gsap, ScrollTrigger, SplitText, useGSAP, prefersReducedMotion, belowFold } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, belowFold, loadSplitText } from "@/lib/gsap";
 
 /*
  * Scroll-driven reveals.
@@ -32,11 +32,14 @@ export function SplitReveal({ children, as: Tag = "h2", className, delay = 0, im
       const el = ref.current;
       if (!el || immediate || prefersReducedMotion() || !belowFold(el)) return;
       gsap.set(el, { opacity: 0 });
-      let split: SplitText | null = null;
+      let split: { revert: () => void } | null = null;
+      let dead = false;
       const io = new IntersectionObserver(
         ([entry]) => {
           if (!entry.isIntersecting) return;
           io.disconnect();
+          loadSplitText().then((SplitText) => {
+          if (dead) return;
           split = SplitText.create(el, {
             type: "lines",
             mask: "lines",
@@ -46,11 +49,13 @@ export function SplitReveal({ children, as: Tag = "h2", className, delay = 0, im
               return gsap.from(self.lines, { yPercent: 110, duration: 1.2, stagger, delay, ease: "expo.out" });
             },
           });
+          });
         },
         { rootMargin: "0px 0px -8% 0px" },
       );
       io.observe(el);
       return () => {
+        dead = true;
         io.disconnect();
         split?.revert();
       };
@@ -110,10 +115,10 @@ export function ScrubWords({ text, className, as: Tag = "p", highlight = [] }: {
     () => {
       const el = ref.current;
       if (!el || prefersReducedMotion()) return;
-      const words = el.querySelectorAll<HTMLElement>("[data-w]");
+      const words = el.querySelectorAll<HTMLElement>("[data-w]:not(.text-signal)");
       gsap.fromTo(
         words,
-        { opacity: 0.28 },
+        { opacity: 0.5 },
         { opacity: 1, ease: "none", stagger: 0.1, scrollTrigger: { trigger: el, start: "top 82%", end: "bottom 50%", scrub: 0.6 } },
       );
     },
@@ -133,7 +138,7 @@ export function ScrubWords({ text, className, as: Tag = "p", highlight = [] }: {
 
 /** Image frame that unmasks on enter and drifts with scroll. */
 export function Parallax({ children, className, amount = 12, reveal = true }: { children: ReactNode; className?: string; amount?: number; reveal?: boolean }) {
-  const positioned = /(absolute|fixed)/.test(className ?? "");
+  const positioned = (className ?? "").split(/\s+/).some((c) => c === "absolute" || c === "fixed");
   const ref = useRef<HTMLDivElement>(null);
 
   useGSAP(

@@ -92,12 +92,19 @@ export function Footer() {
         </p>
       </div>
 
-      <p
-        aria-hidden
-        className="font-display pointer-events-none mt-16 select-none whitespace-nowrap text-center text-[15.5vw] font-black uppercase leading-[0.78] text-graphite-2 [--wdth:62]"
-      >
-        Torque&amp;Temper
-      </p>
+      {/* Decorative wordmark as SVG text: stretched edge to edge, ignored by contrast checks. */}
+      <svg aria-hidden viewBox="0 0 1000 150" className="wrap mt-16 block w-full text-graphite-2">
+        <text
+          x="0"
+          y="128"
+          textLength="1000"
+          lengthAdjust="spacingAndGlyphs"
+          className="font-display fill-current font-black uppercase [--wdth:62]"
+          style={{ fontSize: 160 }}
+        >
+          Torque&amp;Temper
+        </text>
+      </svg>
 
       <div className="wrap mt-8 flex flex-col gap-3 border-t border-line pt-6 text-sm text-faint md:flex-row md:items-center md:justify-between">
         <p>

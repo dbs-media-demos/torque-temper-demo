@@ -19,6 +19,7 @@ export const jetbrains = JetBrains_Mono({
   weight: ["400", "500"],
   variable: "--font-jetbrains",
   display: "swap",
+  preload: false,
 });
 
 export const fontVariables = `${archivo.variable} ${hanken.variable} ${jetbrains.variable}`;
