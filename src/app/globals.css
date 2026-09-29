@@ -231,6 +231,7 @@ html.lenis body {
 
 /* ────────────────────────── elements ────────────────────────── */
 
+@layer components {
 /* Machined, chamfered buttons. */
 .btn {
   --chamfer: 10px;
@@ -313,6 +314,7 @@ html.lenis body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
 }
 
 /* Film grain over dark photography */
