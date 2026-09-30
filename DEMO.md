@@ -1,6 +1,6 @@
 # Torque & Temper Auto Works (Scale by Noon demo)
 
-- Niche: Auto repair shop         (matches scale-by-noon.vercel.app industry id: auto-repair)
+- Niche: Auto repair shop         (matches www.scalebynoon.com industry id: auto-repair)
 - Market / city: US – Dallas, TX (East Dallas; Lakewood, Lake Highlands, Garland, Mesquite)
 - Languages: en
 - Live URL: https://torque-temper-demo.vercel.app

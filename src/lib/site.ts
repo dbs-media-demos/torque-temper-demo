@@ -47,7 +47,7 @@ export const site = {
   hoursSummary: "Mon–Fri 7:30–6 · Sat 8–2",
   agencyName: "Scale by Noon",
   /** Agency site: the single source for the credit link (swap here when the custom domain lands). */
-  agencyUrl: "https://scale-by-noon.vercel.app",
+  agencyUrl: "https://www.scalebynoon.com",
 } as const;
 
 export const absoluteUrl = (path = "/") => `${siteUrl}${path === "/" ? "" : path}`;
