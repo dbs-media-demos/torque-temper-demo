@@ -1,5 +1,5 @@
 /**
- * Business facts for Torque & Temper Auto Works (a fictional shop: DBS Media concept site).
+ * Business facts for Torque & Temper Auto Works (a fictional shop: Scale by Noon concept site).
  * Everything that appears in copy, structured data and share images reads from here.
  */
 export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://torque-temper-demo.vercel.app").replace(/\/$/, "");
@@ -45,7 +45,9 @@ export const site = {
     { day: 6, label: "Saturday", open: "08:00", close: "14:00" },
   ] as { day: number; label: string; open: string | null; close: string | null }[],
   hoursSummary: "Mon–Fri 7:30–6 · Sat 8–2",
-  dbsUrl: "https://dbs-media.com",
+  agencyName: "Scale by Noon",
+  /** Agency site: the single source for the credit link (swap here when the custom domain lands). */
+  agencyUrl: "https://scale-by-noon.vercel.app",
 } as const;
 
 export const absoluteUrl = (path = "/") => `${siteUrl}${path === "/" ? "" : path}`;

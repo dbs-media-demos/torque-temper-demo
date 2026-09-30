@@ -1,6 +1,6 @@
-# Torque & Temper Auto Works (DBS Media demo)
+# Torque & Temper Auto Works (Scale by Noon demo)
 
-- Niche: Auto repair shop         (matches dbs-media.com industry id: auto-repair)
+- Niche: Auto repair shop         (matches scale-by-noon.vercel.app industry id: auto-repair)
 - Market / city: US – Dallas, TX (East Dallas; Lakewood, Lake Highlands, Garland, Mesquite)
 - Languages: en
 - Live URL: https://torque-temper-demo.vercel.app
@@ -25,7 +25,7 @@
 ## Notes
 - Fictional business: 6120 Anvil Row, Dallas, TX 75218 (invented street), phone (214) 555-0147, hello@torqueandtemper.com. Name checked against Dallas businesses.
 - Forms validate and show success states but send nothing.
-- "Concept site by DBS Media ↗" pill (dismissible) + footer credit.
+- "Concept site by Scale by Noon ↗" pill (dismissible) + footer credit.
 - Texas inspection copy reflects the 2025 change (no safety inspection for most passenger cars; Dallas County emissions test still required). The $18.50 emissions fee should be double-checked before reuse for a real client.
 - Photos: Unsplash; video/frames: Pexels (cottonbro studio). Full list in `public/images/SOURCES.md`.
 - Vercel project `torque-temper-demo` (team Dimitrije's projects). `vercel.json` pins the Next.js framework preset.

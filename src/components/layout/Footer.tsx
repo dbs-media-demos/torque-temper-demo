@@ -112,8 +112,8 @@ export function Footer() {
         </p>
         <p>
           Design &amp; development:{" "}
-          <a href={site.dbsUrl} className="heat-link text-muted hover:text-fg">
-            DBS Media
+          <a href={site.agencyUrl} className="heat-link text-muted hover:text-fg">
+            {site.agencyName}
           </a>
         </p>
       </div>

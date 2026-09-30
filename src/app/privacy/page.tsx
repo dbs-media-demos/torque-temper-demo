@@ -42,7 +42,7 @@ const sections = [
   {
     h: "About this site",
     p: [
-      "Torque & Temper Auto Works is a fictional business on a concept website designed and built by DBS Media. Forms on this site validate your input but do not send or store anything.",
+      `Torque & Temper Auto Works is a fictional business on a concept website designed and built by ${site.agencyName}. Forms on this site validate your input but do not send or store anything.`,
     ],
   },
 ];

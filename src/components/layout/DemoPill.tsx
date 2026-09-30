@@ -7,7 +7,7 @@ import { site } from "@/lib/site";
 
 const KEY = "tt-demo-pill-dismissed";
 
-/** Small, dismissible "concept site" credit linking to DBS Media. */
+/** Small, dismissible "concept site" credit linking to Scale by Noon. */
 export function DemoPill() {
   const [visible, setVisible] = useState(false);
 
@@ -27,9 +27,9 @@ export function DemoPill() {
       style={{ viewTransitionName: "demo-pill" }}
       className="anim-fade fixed bottom-20 left-3 z-[105] flex items-center rounded-full border border-white/15 bg-asphalt/90 text-chalk shadow-2xl backdrop-blur-xl md:bottom-5 md:left-5"
     >
-      <a href={site.dbsUrl} target="_blank" rel="noopener" className="flex min-h-11 items-center gap-2 py-2 pl-3 pr-1 font-mono text-[0.6rem] sm:text-[0.68rem] uppercase tracking-[0.12em]">
+      <a href={site.agencyUrl} target="_blank" rel="noopener" className="flex min-h-11 items-center gap-2 py-2 pl-3 pr-1 font-mono text-[0.6rem] sm:text-[0.68rem] uppercase tracking-[0.12em]">
         <LogoMark className="size-4" />
-        <span className="sm:hidden">Concept by DBS Media</span><span className="hidden sm:inline">Concept site by DBS Media</span> <span aria-hidden>↗</span>
+        <span className="sm:hidden">Concept by {site.agencyName}</span><span className="hidden sm:inline">Concept site by {site.agencyName}</span> <span aria-hidden>↗</span>
       </a>
       <button
         type="button"
