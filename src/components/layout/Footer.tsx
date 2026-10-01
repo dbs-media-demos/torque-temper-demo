@@ -4,21 +4,23 @@ import { OpenBadge } from "@/components/ui/OpenBadge";
 import { services } from "@/content/services";
 import { areas } from "@/content/areas";
 import { footerNav } from "./nav";
-import { fmtTime } from "@/lib/hours";
+import { DAY_NAMES, fmtTime } from "@/lib/hours";
 import { site } from "@/lib/site";
 import { defaultBiz, telOf, type Biz } from "@/lib/biz";
-
-const DAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+import { tOf } from "@/lib/i18n";
 
 export function Footer({ biz = defaultBiz }: { biz?: Biz }) {
   const telHref = telOf(biz);
+  const t = tOf(biz);
+  const f = (time: string) => fmtTime(time, biz.lang);
   return (
     <footer className="theme-dark relative overflow-hidden border-t border-line pb-28 md:pb-10">
       <div className="wrap grid gap-12 pt-20 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
         <div className="flex flex-col gap-6">
           <LogoMark className="size-14 text-chalk" />
           <p className="max-w-sm text-lg leading-snug text-fg">
-            {biz.preview ? `${biz.name}: auto repair in ${biz.area}.` : `Family-owned auto repair in East Dallas since ${site.founded}.`} Photos before any work, prices that match the invoice.
+            {biz.preview ? t("{name}: auto repair in {area}.", { name: biz.name, area: biz.area }) : `Family-owned auto repair in East Dallas since ${site.founded}.`}{" "}
+            {t("Photos before any work, prices that match the invoice.")}
           </p>
           <address className="not-italic text-muted">
             {biz.address.full}
@@ -43,12 +45,12 @@ export function Footer({ biz = defaultBiz }: { biz?: Biz }) {
         </div>
 
         <div>
-          <p className="t-eyebrow text-faint">Services</p>
+          <p className="t-eyebrow text-faint">{t("Services")}</p>
           <ul className="mt-5 flex flex-col gap-2.5">
             {services.map((s) => (
               <li key={s.slug}>
                 <Link href={`/services/${s.slug}`} className="heat-link text-muted transition-colors hover:text-fg">
-                  {s.name}
+                  {t(s.name)}
                 </Link>
               </li>
             ))}
@@ -57,12 +59,12 @@ export function Footer({ biz = defaultBiz }: { biz?: Biz }) {
 
         {footerNav.map((col) => (
           <div key={col.title}>
-            <p className="t-eyebrow text-faint">{col.title}</p>
+            <p className="t-eyebrow text-faint">{t(col.title)}</p>
             <ul className="mt-5 flex flex-col gap-2.5">
               {col.links.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="heat-link text-muted transition-colors hover:text-fg">
-                    {l.label}
+                    {t(l.label)}
                   </Link>
                 </li>
               ))}
@@ -92,15 +94,15 @@ export function Footer({ biz = defaultBiz }: { biz?: Biz }) {
             .concat(biz.hours ? biz.hours[0] : [])
             .map((h) => (
               <div key={h.day} className="contents">
-                <dt className="text-faint">{DAY[h.day]}</dt>
-                <dd>{h.open && h.close ? `${fmtTime(h.open)} – ${fmtTime(h.close)}` : "Closed"}</dd>
+                <dt className="text-faint">{DAY_NAMES[biz.lang][h.day].slice(0, 3)}</dt>
+                <dd>{h.open && h.close ? `${f(h.open)} – ${f(h.close)}` : t("Closed")}</dd>
               </div>
             ))}
         </dl>
         <p className="font-mono text-xs uppercase tracking-[0.12em] text-muted md:text-right">
-          24-month / 24,000-mile warranty
+          {t("24-month / 24,000-mile warranty")}
           <br />
-          ASE-certified technicians
+          {t("ASE-certified technicians")}
         </p>
       </div>
 
@@ -121,11 +123,11 @@ export function Footer({ biz = defaultBiz }: { biz?: Biz }) {
       <div className="wrap mt-8 flex flex-col gap-3 border-t border-line pt-6 text-sm text-faint md:flex-row md:items-center md:justify-between">
         <p>
           {biz.preview
-            ? `© ${new Date().getFullYear()} ${biz.name}. A preview homepage made for ${biz.name}.`
+            ? `© ${new Date().getFullYear()} ${biz.name}. ${t("A preview homepage made for {name}.", { name: biz.name })}`
             : `© ${new Date().getFullYear()} ${site.name}. A concept site: the business is fictional.`}
         </p>
         <p>
-          Design &amp; development:{" "}
+          {t("Design & development:")}{" "}
           <a href={site.agencyUrl} className="heat-link text-muted hover:text-fg">
             {site.agencyName}
           </a>

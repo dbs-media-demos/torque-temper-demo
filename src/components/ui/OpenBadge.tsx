@@ -9,15 +9,15 @@ import { useBiz } from "@/components/preview/BizContext";
 export function OpenBadge({ className }: { className?: string }) {
   const biz = useBiz();
   const [state, setState] = useState<OpenState | null>(null);
-  const { hours, timezone } = biz;
+  const { hours, timezone, lang } = biz;
 
   useEffect(() => {
     if (!hours) return;
-    const tick = () => setState(openState(new Date(), hours, timezone));
+    const tick = () => setState(openState(new Date(), hours, timezone, lang));
     tick();
     const id = window.setInterval(tick, 60_000);
     return () => window.clearInterval(id);
-  }, [hours, timezone]);
+  }, [hours, timezone, lang]);
 
   // A preview of a business whose hours we don't know: no badge rather than a made-up one
   if (!hours) return null;

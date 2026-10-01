@@ -7,12 +7,14 @@ import clsx from "clsx";
 import { gsap, useGSAP, isTouch, prefersReducedMotion } from "@/lib/gsap";
 import { ArrowUpRight } from "@/components/ui/Icons";
 import type { Service } from "@/content/services";
+import { useT } from "@/components/preview/BizContext";
 
 /**
  * Service index as big typographic rows. On desktop a photo follows the cursor and
  * swaps per row; on touch each row carries its own thumbnail.
  */
 export function ServiceRows({ items }: { items: Service[] }) {
+  const t = useT();
   const root = useRef<HTMLDivElement>(null);
   const float = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<number | null>(null);
@@ -69,7 +71,7 @@ export function ServiceRows({ items }: { items: Service[] }) {
               </span>
               <span className="hidden text-sm text-muted md:block">{s.eyebrow}</span>
               <span className="hidden font-mono text-sm md:block">
-                <span className="text-faint">from </span>
+                <span className="text-faint">{t("from")} </span>
                 {s.priceFrom} <span className="text-faint">{s.priceUnit}</span>
               </span>
               <span className="grid size-11 place-items-center rounded-full border border-line transition-colors duration-500 group-hover:border-signal group-hover:bg-signal group-hover:text-asphalt">

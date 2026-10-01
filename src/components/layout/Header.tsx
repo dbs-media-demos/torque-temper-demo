@@ -3,18 +3,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { Logo } from "@/components/brand/Logo";
 import { OpenBadge } from "@/components/ui/OpenBadge";
 import { Phone, Close, ArrowRight } from "@/components/ui/Icons";
-import { services } from "@/content/services";
+import { services as allServices } from "@/content/services";
+import { localServices } from "@/i18n/content";
 import { mainNav } from "./nav";
-import { useBiz } from "@/components/preview/BizContext";
+import { useBiz, useT } from "@/components/preview/BizContext";
 import { telOf } from "@/lib/biz";
 
 export function Header() {
   const biz = useBiz();
+  const t = useT();
+  const services = useMemo(() => localServices(t, allServices), [t]);
   const telHref = telOf(biz);
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -82,7 +85,7 @@ export function Header() {
           )}
         />
         <div className="wrap flex h-[var(--header-h)] items-center justify-between gap-6">
-          <Link href="/" aria-label={`${biz.name}, home`} className="shrink-0">
+          <Link href="/" aria-label={t("{name}, home", { name: biz.name })} className="shrink-0">
             <Logo />
           </Link>
 
@@ -97,7 +100,7 @@ export function Header() {
                     onFocus={() => setMegaOpen(true)}
                     className={clsx("t-eyebrow block whitespace-nowrap px-3 py-2 transition-colors hover:text-fg", isActive(item.href) ? "text-fg" : "text-muted")}
                   >
-                    {item.label}
+                    {t(item.label)}
                     <span aria-hidden className={clsx("ml-1.5 inline-block transition-transform", megaOpen && "rotate-180")}>
                       ▾
                     </span>
@@ -111,7 +114,7 @@ export function Header() {
                   aria-current={isActive(item.href) ? "page" : undefined}
                   className={clsx("t-eyebrow whitespace-nowrap px-3 py-2 transition-colors hover:text-fg", isActive(item.href) ? "text-fg" : "text-muted")}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </Link>
               ),
             )}
@@ -126,7 +129,7 @@ export function Header() {
               {biz.phoneDisplay}
             </a>
             <Link href="/book" className="btn btn-signal hidden !min-h-11 sm:inline-flex">
-              Book now
+              {t("Book now")}
             </Link>
             <button
               ref={menuButton}
@@ -134,7 +137,7 @@ export function Header() {
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={menuOpen ? t("Close menu") : t("Open menu")}
               className="relative grid size-11 place-items-center lg:hidden"
             >
               <span className={clsx("absolute h-0.5 w-6 bg-current transition-transform duration-500", menuOpen ? "rotate-45" : "-translate-y-1.5")} />
@@ -165,7 +168,7 @@ export function Header() {
                     <span className={clsx("font-display text-2xl font-bold uppercase transition-colors [--wdth:88]", preview === i ? "text-fg" : "text-muted")}>
                       {s.name}
                     </span>
-                    <span className="font-mono text-xs text-signal">from {s.priceFrom}</span>
+                    <span className="font-mono text-xs text-signal">{t("from")} {s.priceFrom}</span>
                   </Link>
                 </li>
               ))}
@@ -193,10 +196,10 @@ export function Header() {
               </div>
               <div className="flex flex-col gap-3">
                 <Link href="/services" className="t-eyebrow inline-flex items-center gap-2 text-muted hover:text-fg">
-                  All services <ArrowRight />
+                  {t("All services")} <ArrowRight />
                 </Link>
                 <Link href="/whats-that-noise" className="t-eyebrow inline-flex items-center gap-2 text-muted hover:text-fg">
-                  Not sure what it is? Try the symptom finder <ArrowRight />
+                  {t("Not sure what it is? Try the symptom finder")} <ArrowRight />
                 </Link>
               </div>
             </div>
@@ -224,21 +227,21 @@ export function Header() {
               className="flex items-baseline justify-between border-b border-line py-3"
               style={{ transitionDelay: menuOpen ? `${120 + i * 45}ms` : "0ms" }}
             >
-              <span className="font-display text-4xl font-extrabold uppercase [--wdth:70]">{item.label}</span>
+              <span className="font-display text-4xl font-extrabold uppercase [--wdth:70]">{t(item.label)}</span>
               <span className="font-mono text-xs text-faint">0{i + 1}</span>
             </Link>
           ))}
           <div className="mt-auto flex flex-col gap-3 pt-10">
             <OpenBadge className="text-muted" />
             <a href={telHref} className="btn btn-ghost w-full">
-              <Phone /> Call {biz.phoneDisplay}
+              <Phone /> {t("Call {phone}", { phone: biz.phoneDisplay })}
             </a>
             <Link href="/book" className="btn btn-signal w-full">
-              Book an appointment
+              {t("Book an appointment")}
             </Link>
           </div>
         </nav>
-        <button type="button" onClick={() => setMenuOpen(false)} className="sr-only focus:not-sr-only" aria-label="Close menu">
+        <button type="button" onClick={() => setMenuOpen(false)} className="sr-only focus:not-sr-only" aria-label={t("Close menu")}>
           <Close />
         </button>
       </div>

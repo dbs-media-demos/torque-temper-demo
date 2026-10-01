@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, belowFold } from "@/lib/gsap";
-import { systems } from "@/content/systems";
+import { systems as allSystems } from "@/content/systems";
+import { useT } from "@/components/preview/BizContext";
+import { localSystems } from "@/i18n/content";
 import type { SystemId } from "@/content/services";
 import { ArrowRight } from "@/components/ui/Icons";
 
@@ -104,6 +106,8 @@ const RIMS = [
  */
 export function CarDiagram() {
   const root = useRef<HTMLDivElement>(null);
+  const t = useT();
+  const systems = useMemo(() => localSystems(t, allSystems), [t]);
   const [active, setActive] = useState<SystemId>("brakes");
   const current = systems.find((s) => s.id === active)!;
 
@@ -147,13 +151,13 @@ export function CarDiagram() {
     <div ref={root} className="grid gap-10 lg:grid-cols-[1fr_22rem] lg:gap-14">
       <div className="relative">
         <svg viewBox="0 0 1000 440" className="w-full overflow-visible" role="group" aria-labelledby="car-diagram-title">
-          <title id="car-diagram-title">{`X-ray diagram of a car showing its main systems. The ${current.label.toLowerCase()} system is highlighted.`}</title>
+          <title id="car-diagram-title">{t("X-ray diagram of a car showing its main systems. The {system} system is highlighted.", { system: current.label.toLowerCase() })}</title>
           {/* ground + dimension line */}
           <g data-dim opacity="0.35" className="text-muted">
             <path d="M40 374 H960" stroke="currentColor" strokeDasharray="4 6" fill="none" />
             <path d="M246 412 H775 M246 404 V420 M775 404 V420" stroke="currentColor" fill="none" />
             <text x="510" y="432" textAnchor="middle" className="fill-current font-mono text-[11px] uppercase tracking-[0.2em]">
-              Wheelbase 2,830 mm
+              {t("Wheelbase 2,830 mm")}
             </text>
           </g>
 
@@ -202,7 +206,7 @@ export function CarDiagram() {
               key={s.id}
               role="button"
               tabIndex={0}
-              aria-label={`Show ${s.label}`}
+              aria-label={t("Show {system}", { system: s.label })}
               aria-pressed={active === s.id}
               className="cursor-pointer outline-none [&:focus-visible>circle:first-child]:stroke-signal"
               onPointerEnter={() => select(s.id)}
@@ -221,7 +225,7 @@ export function CarDiagram() {
         </svg>
 
         {/* System chips (touch-friendly + keyboard) */}
-        <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Car systems">
+        <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label={t("Car systems")}>
           {systems.map((s, i) => (
             <button
               key={s.id}
@@ -242,10 +246,10 @@ export function CarDiagram() {
       {/* Detail panel */}
       <div className="relative flex flex-col justify-between gap-8 border border-line bg-bg/60 p-6 backdrop-blur lg:p-8" aria-live="polite">
         <div key={current.id} className="anim-fade" style={{ ["--d" as string]: "-0.1s" }}>
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-signal">System {systems.indexOf(current) + 1} / {systems.length}</p>
+          <p className="font-mono text-xs uppercase tracking-[0.16em] text-signal">{t("System {n} / {total}", { n: systems.indexOf(current) + 1, total: systems.length })}</p>
           <h3 className="t-h3 mt-4 text-[2rem]">{current.label}</h3>
           <p className="mt-4 leading-relaxed text-muted">{current.blurb}</p>
-          <p className="t-eyebrow mt-8 text-faint">Watch for</p>
+          <p className="t-eyebrow mt-8 text-faint">{t("Watch for")}</p>
           <ul className="mt-3 flex flex-col gap-2">
             {current.watch.map((w) => (
               <li key={w} className="flex items-center gap-3 text-sm">
@@ -257,11 +261,11 @@ export function CarDiagram() {
         </div>
         <div className="flex items-end justify-between gap-4 border-t border-line pt-6">
           <p>
-            <span className="block font-mono text-[0.7rem] uppercase tracking-[0.14em] text-faint">From</span>
+            <span className="block font-mono text-[0.7rem] uppercase tracking-[0.14em] text-faint">{t("From")}</span>
             <span className="font-display text-4xl font-extrabold [--wdth:80]">{current.from}</span>
           </p>
           <Link href={`/services/${current.service}`} className="btn btn-signal group !min-h-11 !px-4">
-            Details <ArrowRight className="transition-transform group-hover:translate-x-1" />
+            {t("Details")} <ArrowRight className="transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>

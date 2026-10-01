@@ -1,21 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useBiz } from "./BizContext";
+import { useBiz, useT } from "./BizContext";
 
-const PAGES: Record<string, string> = {
-  services: "services",
-  book: "online booking",
-  contact: "contact",
-  about: "about",
-  reviews: "reviews",
-  faq: "FAQ",
-  gallery: "gallery",
-  fleet: "fleet accounts",
-  specials: "specials",
-  areas: "service area",
-  "whats-that-noise": "symptom finder",
-  privacy: "privacy",
+/** The concept site's other pages, by first path segment, in each preview language */
+const PAGES: Record<string, { en: string; sr: string }> = {
+  services: { en: "services", sr: "Usluge" },
+  book: { en: "online booking", sr: "Zakazivanje" },
+  contact: { en: "contact", sr: "Kontakt" },
+  about: { en: "about", sr: "O nama" },
+  reviews: { en: "reviews", sr: "Utisci" },
+  faq: { en: "FAQ", sr: "Česta pitanja" },
+  gallery: { en: "gallery", sr: "Galerija" },
+  fleet: { en: "fleet accounts", sr: "Vozni parkovi" },
+  specials: { en: "specials", sr: "Akcije" },
+  areas: { en: "service area", sr: "Gde radimo" },
+  "whats-that-noise": { en: "symptom finder", sr: "Šta to lupa?" },
+  privacy: { en: "privacy", sr: "Privatnost" },
 };
 
 /**
@@ -24,7 +25,13 @@ const PAGES: Record<string, string> = {
  */
 export function PreviewGuard() {
   const biz = useBiz();
+  const t = useT();
   const [note, setNote] = useState<string | null>(null);
+
+  // The page's language for screen readers and the browser's translate offer
+  useEffect(() => {
+    document.documentElement.lang = biz.lang === "sr" ? "sr-Latn" : "en-US";
+  }, [biz.lang]);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -41,12 +48,12 @@ export function PreviewGuard() {
         else window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
-      const page = PAGES[url.pathname.split("/")[1]] ?? "that";
-      setNote(`The ${page} page comes with the full ${biz.shortName} site.`);
+      const page = PAGES[url.pathname.split("/")[1]];
+      setNote(page ? t("The {page} page comes with the full {name} site.", { page: page[biz.lang], name: biz.shortName }) : t("That page comes with the full {name} site.", { name: biz.shortName }));
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, [biz.shortName]);
+  }, [biz.shortName, biz.lang, t]);
 
   useEffect(() => {
     if (!note) return;

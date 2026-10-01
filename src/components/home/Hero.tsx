@@ -8,13 +8,14 @@ import { BookButton, CallButton, Stars } from "@/components/ui/Bits";
 import { OpenBadge } from "@/components/ui/OpenBadge";
 import { Google } from "@/components/ui/Icons";
 import { site } from "@/lib/site";
-import { useBiz } from "@/components/preview/BizContext";
+import { useBiz, useT } from "@/components/preview/BizContext";
+import { num } from "@/lib/i18n";
 
 const DESKTOP_MQ = "(min-width: 640px)";
 
 /** Art-directed poster: landscape frame on tablets/desktop, portrait frame on phones. Both preloaded by media query. */
-function HeroPicture({ shopName }: { shopName: string }) {
-  const common = { alt: `Inside the ${shopName} shop: a car in the bay while a technician works at the bench`, sizes: "100vw" };
+function HeroPicture({ alt }: { alt: string }) {
+  const common = { alt, sizes: "100vw" };
   const { props: desk } = getImageProps({ ...common, width: 1280, height: 720, quality: 75, src: "/images/hero-poster.jpg" });
   const { props: mob } = getImageProps({ ...common, width: 720, height: 1280, quality: 75, src: "/images/hero-poster-portrait.jpg" });
   preload(desk.src, { as: "image", imageSrcSet: desk.srcSet, imageSizes: "100vw", media: DESKTOP_MQ, fetchPriority: "high" });
@@ -36,6 +37,7 @@ function HeroPicture({ shopName }: { shopName: string }) {
  */
 export function Hero() {
   const biz = useBiz();
+  const t = useT();
   const root = useRef<HTMLElement>(null);
   const [videoOn, setVideoOn] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -99,7 +101,7 @@ export function Hero() {
       {/* Media frame */}
       <div data-frame className="absolute inset-0 overflow-hidden">
         <div data-media className="absolute inset-0 [animation:hero-zoom_2.4s_var(--ease-out-expo)_both]">
-          <HeroPicture shopName={biz.preview ? biz.shortName : "Torque & Temper"} />
+          <HeroPicture alt={t("Inside the {shop} shop: a car in the bay while a technician works at the bench", { shop: biz.preview ? biz.shortName : "Torque & Temper" })} />
           {videoOn && (
             <video
               className="absolute inset-0 size-full object-cover transition-opacity duration-1000"
@@ -128,11 +130,11 @@ export function Hero() {
           </svg>
           <span className="anim-fade absolute left-[58%] top-[34%] size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-signal" style={{ ["--d" as string]: "0.8s" }} />
           <span className="anim-fade absolute left-[80.5%] top-[26%] -translate-y-1/2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-chalk" style={{ ["--d" as string]: "1.5s" }}>
-            Bay 03 · lift up · 7:42 am
+            {t("Bay 03 · lift up · 7:42 am")}
           </span>
           <span className="anim-fade absolute left-[73%] top-[58%] size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-chalk/80" style={{ ["--d" as string]: "1.1s" }} />
           <span className="anim-fade absolute left-[91.5%] top-[50%] -translate-y-1/2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-chalk/80" style={{ ["--d" as string]: "1.8s" }}>
-            Lug M12 · 110 N·m
+            {t("Lug M12 · 110 N·m")}
           </span>
         </div>
 
@@ -142,7 +144,7 @@ export function Hero() {
             <span key={c} className={`absolute size-10 border-signal ${c}`} />
           ))}
           <span className="absolute left-4 top-3 flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-chalk">
-            <span className="size-2 rounded-full bg-signal" /> Photo 01 / 12 · front pads
+            <span className="size-2 rounded-full bg-signal" /> {t("Photo 01 / 12 · front pads")}
           </span>
         </div>
       </div>
@@ -165,10 +167,10 @@ export function Hero() {
           </h1>
         ) : (
           <h1 id="hero-title" className="t-display anim-wdth text-chalk !text-[clamp(3.1rem,8.2vw,9.5rem)]">
-            <span className="block">Honest</span>
-            <span className="block">auto repair</span>
+            <span className="block">{t("Honest")}</span>
+            <span className="block">{t("auto repair")}</span>
             <span className="block">
-              in {biz.area}<span className="text-signal">.</span>
+              {t("in {area}", { area: biz.area })}<span className="text-signal">.</span>
             </span>
           </h1>
         )}
@@ -176,7 +178,7 @@ export function Hero() {
         <div data-lead className="mt-8 grid gap-6 md:mt-10 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
           <div className="anim-fade" style={{ ["--d" as string]: "0.35s" }}>
             <p className="t-lead max-w-xl text-chalk/85">
-              We text you photos of the problem before we touch a wrench. You approve every dollar, and the invoice matches the quote.
+              {t("We text you photos of the problem before we touch a wrench. You approve every dollar, and the invoice matches the quote.")}
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <BookButton />
@@ -188,10 +190,10 @@ export function Hero() {
               <>
                 <div className="flex items-center gap-3">
                   <Google />
-                  <span className="font-display text-3xl font-extrabold [--wdth:90]">{biz.rating.value}</span>
+                  <span className="font-display text-3xl font-extrabold [--wdth:90]">{num(biz, biz.rating.value)}</span>
                   <Stars value={biz.rating.value} />
                 </div>
-                <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-chalk/70">{biz.rating.count} Google reviews</p>
+                <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-chalk/70">{t("{count} Google reviews", { count: biz.rating.count })}</p>
               </>
             )}
             <OpenBadge className="text-chalk/80" />
@@ -205,9 +207,10 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute bottom-[8%] right-[7%] hidden w-[20rem] rounded-2xl border border-white/10 bg-asphalt/90 p-4 opacity-0 backdrop-blur-xl lg:block"
       >
-        <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/60">Text message · now</p>
+        <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/60">{t("Text message · now")}</p>
         <p className="mt-2 text-sm leading-snug text-chalk">
-          Hi Marisol, {biz.preview ? `it's ${biz.shortName}` : <>Dana at Torque &amp; Temper</>}. Photo attached: front pads at 2 mm. <span className="text-signal">$189, approve?</span>
+          {biz.preview ? t("Hi Marisol, it's {name}. Photo attached: front pads at 2 mm.", { name: biz.shortName }) : "Hi Marisol, Dana at Torque & Temper. Photo attached: front pads at 2 mm."}{" "}
+          <span className="text-signal">{t("$189, approve?")}</span>
         </p>
       </div>
 

@@ -5,7 +5,11 @@ import { site, fullAddress } from "./site";
  * personalised preview (/for/<token>, made from a lead in the Scale by Noon CRM) it's a real
  * business: its name, phone, address, hours and Google rating, nothing else.
  */
+export type Lang = "en" | "sr";
+
 export type Biz = {
+  /** The language the page is in: Serbian for Serbian businesses (the CRM decides) */
+  lang: Lang;
   name: string;
   shortName: string;
   /** Hero headline override (CRM); null = the demo's own */
@@ -26,6 +30,7 @@ export type Biz = {
 };
 
 export const defaultBiz: Biz = {
+  lang: "en",
   name: site.name,
   shortName: site.shortName,
   tagline: null,
@@ -70,6 +75,7 @@ export function scrub(text: string, biz: Biz) {
 
 /** What the CRM sends for a preview (GET /api/demos/public/<token>). */
 type CrmBusiness = {
+  lang?: string;
   name: string;
   shortName: string;
   tagline: string | null;
@@ -85,6 +91,7 @@ type CrmBusiness = {
 
 export function bizFromCrm(b: CrmBusiness): Biz {
   return {
+    lang: b.lang === "sr" ? "sr" : "en",
     name: b.name,
     shortName: b.shortName || b.name,
     tagline: b.tagline || null,

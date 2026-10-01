@@ -5,13 +5,13 @@ import { useRef } from "react";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
 import { dayInTheBays } from "@/content/general";
 import { Eyebrow } from "@/components/ui/Bits";
-import { useBiz } from "@/components/preview/BizContext";
+import { useBiz, useT } from "@/components/preview/BizContext";
 import { scrub } from "@/lib/biz";
 
-/** "07:30" → "7:30", "18:00" → "6:00" (the heading's style) */
-const clock = (t: string) => {
+/** "07:30" → "7:30", "18:00" → "6:00" (the heading's style); Serbian keeps 24h ("18:00") */
+const clock = (t: string, h24: boolean) => {
   const [h, m] = t.split(":").map(Number);
-  return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}`;
+  return `${h24 ? h : h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}`;
 };
 
 /**
@@ -20,6 +20,8 @@ const clock = (t: string) => {
  */
 export function DayInBays() {
   const biz = useBiz();
+  const t = useT();
+  const h24 = biz.lang === "sr";
   // A preview shows the business's own weekday hours
   const weekday = biz.hours?.slice(1, 6).find((h) => h.open && h.close);
   const allDay = weekday?.open === "00:00" && weekday?.close === "23:59";
@@ -53,12 +55,18 @@ export function DayInBays() {
     <section ref={root} aria-labelledby="day-title" className="theme-dark relative overflow-hidden py-20 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-0">
       <div className="wrap flex items-end justify-between gap-8">
         <div>
-          <Eyebrow>A day in the bays</Eyebrow>
+          <Eyebrow>{t("A day in the bays")}</Eyebrow>
           <h2 id="day-title" className="t-h2 mt-5">
-            {!biz.preview ? "7:30 to 6:00" : allDay ? "Day and night" : weekday ? `${clock(weekday.open!)} to ${clock(weekday.close!)}` : "Open to close"}
+            {!biz.preview
+              ? "7:30 to 6:00"
+              : allDay
+                ? t("Day and night")
+                : weekday
+                  ? t("{open} to {close}", { open: clock(weekday.open!, h24), close: clock(weekday.close!, h24) })
+                  : t("Open to close")}
             <span className="text-signal">.</span>
             <br />
-            Nothing hidden.
+            {t("Nothing hidden.")}
           </h2>
         </div>
         <svg viewBox="0 0 80 80" className="hidden size-20 shrink-0 text-muted lg:block" aria-hidden>
@@ -78,16 +86,16 @@ export function DayInBays() {
         {dayInTheBays.map((f, i) => (
           <figure key={f.time} className="relative w-[78vw] shrink-0 snap-start sm:w-[46vw] lg:w-[34vw] xl:w-[30vw]">
             <div className="relative aspect-[4/5] overflow-hidden bg-graphite lg:aspect-[5/6]" data-cursor="Drag">
-              <Image data-frame-img src={f.image} alt={f.alt} fill sizes="(min-width: 1024px) 34vw, 78vw" quality={60} className="scale-[1.25] object-cover" />
+              <Image data-frame-img src={f.image} alt={t(f.alt)} fill sizes="(min-width: 1024px) 34vw, 78vw" quality={60} className="scale-[1.25] object-cover" />
               <span className="absolute left-4 top-4 bg-asphalt/80 px-2.5 py-1.5 font-mono text-xs uppercase tracking-[0.14em] text-chalk backdrop-blur">
-                {f.time}
+                {t(f.time)}
               </span>
             </div>
             <figcaption className="mt-5 flex gap-4">
               <span className="font-mono text-xs text-faint">0{i + 1}</span>
               <span>
-                <span className="t-h3 block">{f.title}</span>
-                <span className="mt-2 block max-w-xs text-sm text-muted">{scrub(f.text, biz)}</span>
+                <span className="t-h3 block">{t(f.title)}</span>
+                <span className="mt-2 block max-w-xs text-sm text-muted">{scrub(t(f.text), biz)}</span>
               </span>
             </figcaption>
           </figure>

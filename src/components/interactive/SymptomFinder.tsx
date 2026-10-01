@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import { symptoms, type Wave } from "@/content/symptoms";
+import { symptoms as allSymptoms, type Wave } from "@/content/symptoms";
+import { localSymptoms } from "@/i18n/content";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { ArrowRight, Phone } from "@/components/ui/Icons";
-import { useBiz } from "@/components/preview/BizContext";
+import { useBiz, useT } from "@/components/preview/BizContext";
 import { initialsOf, telOf } from "@/lib/biz";
 
 /** Waveform generator per symptom: y(x, t) in [-1, 1]. */
@@ -128,6 +129,8 @@ function Typed({ text }: { text: string }) {
  */
 export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) {
   const biz = useBiz();
+  const t = useT();
+  const symptoms = useMemo(() => localSymptoms(t, allSymptoms), [t]);
   const telHref = telOf(biz);
   const [idx, setIdx] = useState(0);
   const s = symptoms[idx];
@@ -139,7 +142,7 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
       {/* Title bar */}
       <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/70 md:px-6">
         <span className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-[#3ddc84]" aria-hidden /> {biz.preview ? initialsOf(biz.shortName) : "T&T"} scan tool · connected
+          <span className="size-2 rounded-full bg-[#3ddc84]" aria-hidden /> {t("{who} scan tool · connected", { who: biz.preview ? initialsOf(biz.shortName) : "T&T" })}
         </span>
         <span className="hidden sm:inline">VIN ••••••••••4417 · 12.6 V</span>
       </div>
@@ -148,7 +151,7 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
         {/* Symptom list */}
         <div role="radiogroup" aria-labelledby={groupId} className="flex gap-2 overflow-x-auto border-b border-white/10 p-3 no-scrollbar md:flex-col md:overflow-visible md:border-b-0 md:border-r md:p-4">
           <p id={groupId} className="sr-only">
-            Choose a symptom
+            {t("Choose a symptom")}
           </p>
           {symptoms.map((sym, i) => (
             <button
@@ -186,9 +189,9 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
         <div className="flex flex-col gap-6 p-5 md:p-8" aria-live="polite">
           <div className="flex items-center justify-between font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/70">
             <span>
-              Code <span className="text-signal">{s.code}</span>
+              {t("Code")} <span className="text-signal">{s.code}</span>
             </span>
-            <span>Live trace</span>
+            <span>{t("Live trace")}</span>
           </div>
           <Waveform wave={s.wave} />
           <div>
@@ -200,7 +203,7 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
 
           <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
             <div>
-              <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/60">Likely causes</p>
+              <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/60">{t("Likely causes")}</p>
               <ul className="mt-4 flex flex-col gap-4">
                 {s.causes.map((c) => (
                   <li key={s.id + c.name}>
@@ -217,8 +220,8 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
             </div>
             <dl className="grid grid-cols-2 gap-px self-start bg-white/10 text-sm">
               {[
-                ["Typical price", s.price],
-                ["Typical time", s.time],
+                [t("Typical price"), s.price],
+                [t("Typical time"), s.time],
               ].map(([k, v]) => (
                 <div key={k} className="bg-[#0b0c0e] p-4">
                   <dt className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-chalk/60">{k}</dt>
@@ -226,21 +229,21 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
                 </div>
               ))}
               <div className="col-span-2 bg-[#0b0c0e] p-4">
-                <dt className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-chalk/60">Our advice</dt>
-                <dd className={clsx("mt-2 font-medium", s.urgency.startsWith("Stop") ? "text-signal" : "text-chalk")}>{s.urgency}</dd>
+                <dt className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-chalk/60">{t("Our advice")}</dt>
+                <dd className={clsx("mt-2 font-medium", s.urgency.startsWith("Stop") ? "text-signal" : "text-chalk")}>{t(s.urgency)}</dd>
               </div>
             </dl>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-6">
             <Link href={`/book?service=${s.service}&symptom=${s.id}`} className="btn btn-signal group">
-              Book this diagnosis <ArrowRight className="transition-transform group-hover:translate-x-1" />
+              {t("Book this diagnosis")} <ArrowRight className="transition-transform group-hover:translate-x-1" />
             </Link>
             <a href={telHref} className="btn btn-ghost [--fg:var(--chalk)] [--line-strong:rgba(239,236,230,0.24)]">
-              <Phone /> Describe it to a tech
+              <Phone /> {t("Describe it to a tech")}
             </a>
           </div>
-          <p className="text-xs text-chalk/60">Estimates are typical ranges for common cars. We confirm the cause and price with photos before any work.</p>
+          <p className="text-xs text-chalk/60">{t("Estimates are typical ranges for common cars. We confirm the cause and price with photos before any work.")}</p>
         </div>
       </div>
     </div>

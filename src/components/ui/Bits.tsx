@@ -1,8 +1,7 @@
 import Link from "next/link";
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { Star, ArrowRight } from "./Icons";
-import { Magnetic } from "./Magnetic";
+import { Star } from "./Icons";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, graph } from "@/lib/schema";
 
@@ -55,16 +54,8 @@ export function Breadcrumbs({ items, className }: { items: Crumb[]; className?: 
   );
 }
 
-export function BookButton({ href = "/book", children = "Book a repair", className }: { href?: string; children?: ReactNode; className?: string }) {
-  return (
-    <Magnetic>
-      <Link href={href} className={clsx("btn btn-signal group", className)}>
-        {children}
-        <ArrowRight className="transition-transform duration-500 group-hover:translate-x-1" />
-      </Link>
-    </Magnetic>
-  );
-}
+// Client: its default label follows the page's language on previews
+export { BookButton } from "./BookButton";
 
 // Client: shows the previewed business's number on /for/<token>
 export { CallButton } from "./CallButton";
