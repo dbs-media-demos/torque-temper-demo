@@ -11,12 +11,19 @@ const [cond, wide, mono, photo] = await Promise.all([
 ]);
 const bg = `data:image/jpeg;base64,${photo.toString("base64")}`;
 
-/** Branded 1200×630 share image: /api/og?title=…&eyebrow=… */
+/**
+ * Branded 1200×630 share image: /api/og?title=…&eyebrow=…
+ * Personalised previews also pass name, sub, phone and meta (the real business's details).
+ */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const title = (searchParams.get("title") ?? "The honest shop in East Dallas.").slice(0, 110);
   const eyebrow = (searchParams.get("eyebrow") ?? "Auto repair · East Dallas").slice(0, 60);
   const size = title.length > 60 ? 64 : title.length > 36 ? 80 : 100;
+  const name = searchParams.get("name")?.slice(0, 40) ?? null;
+  const sub = (searchParams.get("sub") ?? "Auto works · East Dallas · Est. 2009").slice(0, 60);
+  const phone = (searchParams.get("phone") ?? "(214) 555-0147").slice(0, 24);
+  const meta = (searchParams.get("meta") ?? "4.9 / 5 · 612 reviews · 24/24 warranty").slice(0, 60);
 
   return new ImageResponse(
     (
@@ -33,9 +40,15 @@ export async function GET(req: Request) {
             </svg>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", fontFamily: "Wide", fontSize: 30, color: "#efece6", letterSpacing: 0.5 }}>
-                TORQUE <span style={{ color: "#ff5b1f", margin: "0 10px" }}>&amp;</span> TEMPER
+                {name ? (
+                  name.toUpperCase()
+                ) : (
+                  <>
+                    TORQUE <span style={{ color: "#ff5b1f", margin: "0 10px" }}>&amp;</span> TEMPER
+                  </>
+                )}
               </div>
-              <div style={{ display: "flex", fontFamily: "Mono", fontSize: 15, color: "#b9b5ad", letterSpacing: 4, marginTop: 6 }}>AUTO WORKS · EAST DALLAS · EST. 2009</div>
+              <div style={{ display: "flex", fontFamily: "Mono", fontSize: 15, color: "#b9b5ad", letterSpacing: 4, marginTop: 6 }}>{sub.toUpperCase()}</div>
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 22, maxWidth: 900 }}>
@@ -46,8 +59,8 @@ export async function GET(req: Request) {
             <div style={{ display: "flex", fontSize: size, lineHeight: 0.92, color: "#efece6", textTransform: "uppercase" }}>{title}</div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", fontFamily: "Mono", fontSize: 20, color: "#efece6", letterSpacing: 2 }}>
-            <div style={{ display: "flex" }}>(214) 555-0147</div>
-            <div style={{ display: "flex", color: "#b9b5ad" }}>4.9 / 5 · 612 REVIEWS · 24/24 WARRANTY</div>
+            <div style={{ display: "flex" }}>{phone}</div>
+            <div style={{ display: "flex", color: "#b9b5ad" }}>{meta.toUpperCase()}</div>
           </div>
         </div>
       </div>

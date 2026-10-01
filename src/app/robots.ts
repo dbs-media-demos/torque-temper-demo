@@ -5,7 +5,7 @@ import { noindex, siteUrl } from "@/lib/site";
 export default function robots(): MetadataRoute.Robots {
   if (noindex) return { rules: [{ userAgent: "*", disallow: "/" }] };
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/for/"] }],
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,
   };

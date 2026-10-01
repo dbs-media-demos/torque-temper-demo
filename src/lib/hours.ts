@@ -15,10 +15,13 @@ export const fmtTime = (t: string) => {
   return m ? `${h12}:${String(m).padStart(2, "0")} ${suffix}` : `${h12} ${suffix}`;
 };
 
+type DayHours = { day: number; open: string | null; close: string | null };
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 /** Current day/minute in the shop's timezone (Dallas), wherever the visitor is. */
-function shopNow(date = new Date()) {
+function shopNow(date = new Date(), timeZone: string = site.timezone) {
   const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: site.timezone,
+    timeZone,
     weekday: "short",
     hour: "2-digit",
     minute: "2-digit",
@@ -29,9 +32,11 @@ function shopNow(date = new Date()) {
   return { day, minutes: Number(get("hour")) * 60 + Number(get("minute")) };
 }
 
-export function openState(date = new Date()): OpenState {
-  const { day, minutes } = shopNow(date);
-  const today = site.hours[day];
+/** Open/closed for any week of hours (a preview's real business), in its own timezone. */
+export function openState(date = new Date(), hours: DayHours[] = site.hours, timeZone: string = site.timezone): OpenState {
+  const { day, minutes } = shopNow(date, timeZone);
+  const today = hours[day];
+  if (today.open === "00:00" && today.close === "23:59") return { open: true, label: "Open 24 hours" };
   if (today.open && today.close) {
     const o = toMin(today.open);
     const c = toMin(today.close);
@@ -43,8 +48,8 @@ export function openState(date = new Date()): OpenState {
   }
   // Find the next opening day.
   for (let i = 1; i <= 7; i++) {
-    const next = site.hours[(day + i) % 7];
-    if (next.open) return { open: false, label: `Closed · opens ${i === 1 ? "tomorrow" : next.label} ${fmtTime(next.open)}` };
+    const next = hours[(day + i) % 7];
+    if (next.open) return { open: false, label: `Closed · opens ${i === 1 ? "tomorrow" : DAY_NAMES[next.day]} ${fmtTime(next.open)}` };
   }
   return { open: false, label: "Closed" };
 }

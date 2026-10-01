@@ -8,12 +8,13 @@ import { BookButton, CallButton, Stars } from "@/components/ui/Bits";
 import { OpenBadge } from "@/components/ui/OpenBadge";
 import { Google } from "@/components/ui/Icons";
 import { site } from "@/lib/site";
+import { useBiz } from "@/components/preview/BizContext";
 
 const DESKTOP_MQ = "(min-width: 640px)";
 
 /** Art-directed poster: landscape frame on tablets/desktop, portrait frame on phones. Both preloaded by media query. */
-function HeroPicture() {
-  const common = { alt: "Inside the Torque & Temper shop: a car in the bay while a technician works at the bench", sizes: "100vw" };
+function HeroPicture({ shopName }: { shopName: string }) {
+  const common = { alt: `Inside the ${shopName} shop: a car in the bay while a technician works at the bench`, sizes: "100vw" };
   const { props: desk } = getImageProps({ ...common, width: 1280, height: 720, quality: 75, src: "/images/hero-poster.jpg" });
   const { props: mob } = getImageProps({ ...common, width: 720, height: 1280, quality: 75, src: "/images/hero-poster-portrait.jpg" });
   preload(desk.src, { as: "image", imageSrcSet: desk.srcSet, imageSizes: "100vw", media: DESKTOP_MQ, fetchPriority: "high" });
@@ -34,6 +35,7 @@ function HeroPicture() {
  * a shutter flash fires and a "photo sent" receipt appears. That's the shop's whole promise.
  */
 export function Hero() {
+  const biz = useBiz();
   const root = useRef<HTMLElement>(null);
   const [videoOn, setVideoOn] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -97,7 +99,7 @@ export function Hero() {
       {/* Media frame */}
       <div data-frame className="absolute inset-0 overflow-hidden">
         <div data-media className="absolute inset-0 [animation:hero-zoom_2.4s_var(--ease-out-expo)_both]">
-          <HeroPicture />
+          <HeroPicture shopName={biz.preview ? biz.shortName : "Torque & Temper"} />
           {videoOn && (
             <video
               className="absolute inset-0 size-full object-cover transition-opacity duration-1000"
@@ -150,15 +152,26 @@ export function Hero() {
       <div data-copy className="wrap relative flex h-full flex-col justify-end pb-24 pt-[calc(var(--header-h)+2rem)] md:pb-14">
         <p className="anim-fade t-eyebrow mb-6 flex items-center gap-3 text-chalk/80" style={{ ["--d" as string]: "0.1s" }}>
           <span className="stripe" aria-hidden />
-          Family-owned · ASE certified · Since {site.founded}
+          {biz.preview ? (
+            <span className="min-w-0 truncate">{[biz.name, [biz.address.city, biz.address.region].filter(Boolean).join(", ")].filter(Boolean).join(" · ")}</span>
+          ) : (
+            <>Family-owned · ASE certified · Since {site.founded}</>
+          )}
         </p>
-        <h1 id="hero-title" className="t-display anim-wdth text-chalk !text-[clamp(3.1rem,8.2vw,9.5rem)]">
-          <span className="block">Honest</span>
-          <span className="block">auto repair</span>
-          <span className="block">
-            in East Dallas<span className="text-signal">.</span>
-          </span>
-        </h1>
+        {biz.tagline ? (
+          <h1 id="hero-title" className="t-display anim-wdth max-w-[16ch] text-chalk !text-[clamp(2.8rem,7vw,8rem)]">
+            {biz.tagline}
+            <span className="text-signal">.</span>
+          </h1>
+        ) : (
+          <h1 id="hero-title" className="t-display anim-wdth text-chalk !text-[clamp(3.1rem,8.2vw,9.5rem)]">
+            <span className="block">Honest</span>
+            <span className="block">auto repair</span>
+            <span className="block">
+              in {biz.area}<span className="text-signal">.</span>
+            </span>
+          </h1>
+        )}
 
         <div data-lead className="mt-8 grid gap-6 md:mt-10 md:grid-cols-[minmax(0,34rem)_auto] md:items-end md:justify-between">
           <div className="anim-fade" style={{ ["--d" as string]: "0.35s" }}>
@@ -171,12 +184,16 @@ export function Hero() {
             </div>
           </div>
           <div className="anim-fade flex flex-col gap-3 md:items-end" style={{ ["--d" as string]: "0.55s" }}>
-            <div className="flex items-center gap-3">
-              <Google />
-              <span className="font-display text-3xl font-extrabold [--wdth:90]">{site.rating.value}</span>
-              <Stars />
-            </div>
-            <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-chalk/70">{site.rating.count} Google reviews</p>
+            {biz.rating && (
+              <>
+                <div className="flex items-center gap-3">
+                  <Google />
+                  <span className="font-display text-3xl font-extrabold [--wdth:90]">{biz.rating.value}</span>
+                  <Stars value={biz.rating.value} />
+                </div>
+                <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-chalk/70">{biz.rating.count} Google reviews</p>
+              </>
+            )}
             <OpenBadge className="text-chalk/80" />
           </div>
         </div>
@@ -190,7 +207,7 @@ export function Hero() {
       >
         <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/60">Text message · now</p>
         <p className="mt-2 text-sm leading-snug text-chalk">
-          Hi Marisol, Dana at Torque &amp; Temper. Photo attached: front pads at 2 mm. <span className="text-signal">$189, approve?</span>
+          Hi Marisol, {biz.preview ? `it's ${biz.shortName}` : <>Dana at Torque &amp; Temper</>}. Photo attached: front pads at 2 mm. <span className="text-signal">$189, approve?</span>
         </p>
       </div>
 

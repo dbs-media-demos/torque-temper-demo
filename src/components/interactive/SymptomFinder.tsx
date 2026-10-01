@@ -6,7 +6,8 @@ import clsx from "clsx";
 import { symptoms, type Wave } from "@/content/symptoms";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { ArrowRight, Phone } from "@/components/ui/Icons";
-import { telHref } from "@/lib/site";
+import { useBiz } from "@/components/preview/BizContext";
+import { initialsOf, telOf } from "@/lib/biz";
 
 /** Waveform generator per symptom: y(x, t) in [-1, 1]. */
 const waves: Record<Wave, (x: number, t: number) => number> = {
@@ -126,6 +127,8 @@ function Typed({ text }: { text: string }) {
  * a typical price and time, and book that diagnosis with the symptom pre-filled.
  */
 export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) {
+  const biz = useBiz();
+  const telHref = telOf(biz);
   const [idx, setIdx] = useState(0);
   const s = symptoms[idx];
   const H = headingLevel;
@@ -136,7 +139,7 @@ export function SymptomFinder({ headingLevel = "h3" }: { headingLevel?: "h2" | "
       {/* Title bar */}
       <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-chalk/70 md:px-6">
         <span className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-[#3ddc84]" aria-hidden /> T&amp;T scan tool · connected
+          <span className="size-2 rounded-full bg-[#3ddc84]" aria-hidden /> {biz.preview ? initialsOf(biz.shortName) : "T&T"} scan tool · connected
         </span>
         <span className="hidden sm:inline">VIN ••••••••••4417 · 12.6 V</span>
       </div>

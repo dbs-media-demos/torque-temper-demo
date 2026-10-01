@@ -5,12 +5,24 @@ import { useRef } from "react";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap";
 import { dayInTheBays } from "@/content/general";
 import { Eyebrow } from "@/components/ui/Bits";
+import { useBiz } from "@/components/preview/BizContext";
+import { scrub } from "@/lib/biz";
+
+/** "07:30" → "7:30", "18:00" → "6:00" (the heading's style) */
+const clock = (t: string) => {
+  const [h, m] = t.split(":").map(Number);
+  return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}`;
+};
 
 /**
  * "A day in the bays": 7:30 am → 6:00 pm as a pinned horizontal film strip on desktop,
  * a native swipeable rail (scroll-snap) on touch.
  */
 export function DayInBays() {
+  const biz = useBiz();
+  // A preview shows the business's own weekday hours
+  const weekday = biz.hours?.slice(1, 6).find((h) => h.open && h.close);
+  const allDay = weekday?.open === "00:00" && weekday?.close === "23:59";
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
 
@@ -43,7 +55,8 @@ export function DayInBays() {
         <div>
           <Eyebrow>A day in the bays</Eyebrow>
           <h2 id="day-title" className="t-h2 mt-5">
-            7:30 to 6:00<span className="text-signal">.</span>
+            {!biz.preview ? "7:30 to 6:00" : allDay ? "Day and night" : weekday ? `${clock(weekday.open!)} to ${clock(weekday.close!)}` : "Open to close"}
+            <span className="text-signal">.</span>
             <br />
             Nothing hidden.
           </h2>
@@ -74,7 +87,7 @@ export function DayInBays() {
               <span className="font-mono text-xs text-faint">0{i + 1}</span>
               <span>
                 <span className="t-h3 block">{f.title}</span>
-                <span className="mt-2 block max-w-xs text-sm text-muted">{f.text}</span>
+                <span className="mt-2 block max-w-xs text-sm text-muted">{scrub(f.text, biz)}</span>
               </span>
             </figcaption>
           </figure>

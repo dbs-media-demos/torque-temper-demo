@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { Close } from "@/components/ui/Icons";
 import { LogoMark } from "@/components/brand/Logo";
 import { site } from "@/lib/site";
+import { useBiz } from "@/components/preview/BizContext";
 
 const KEY = "tt-demo-pill-dismissed";
 
 /** Small, dismissible "concept site" credit linking to Scale by Noon. */
 export function DemoPill() {
+  const biz = useBiz();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,14 @@ export function DemoPill() {
     >
       <a href={site.agencyUrl} target="_blank" rel="noopener" className="flex min-h-11 items-center gap-2 py-2 pl-3 pr-1 font-mono text-[0.6rem] sm:text-[0.68rem] uppercase tracking-[0.12em]">
         <LogoMark className="size-4" />
-        <span className="sm:hidden">Concept by {site.agencyName}</span><span className="hidden sm:inline">Concept site by {site.agencyName}</span> <span aria-hidden>↗</span>
+        {biz.preview ? (
+          <span className="max-w-[16rem] truncate sm:max-w-none">Preview for {biz.shortName} · by {site.agencyName}</span>
+        ) : (
+          <>
+            <span className="sm:hidden">Concept by {site.agencyName}</span><span className="hidden sm:inline">Concept site by {site.agencyName}</span>
+          </>
+        )}{" "}
+        <span aria-hidden>↗</span>
       </a>
       <button
         type="button"

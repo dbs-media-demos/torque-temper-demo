@@ -1,11 +1,10 @@
 import Link from "next/link";
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { Star, ArrowRight, Phone } from "./Icons";
+import { Star, ArrowRight } from "./Icons";
 import { Magnetic } from "./Magnetic";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, graph } from "@/lib/schema";
-import { site, telHref } from "@/lib/site";
 
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
   return (
@@ -67,16 +66,8 @@ export function BookButton({ href = "/book", children = "Book a repair", classNa
   );
 }
 
-export function CallButton({ className, label }: { className?: string; label?: string }) {
-  return (
-    <Magnetic>
-      <a href={telHref} className={clsx("btn btn-ghost", className)}>
-        <Phone />
-        {label ?? site.phoneDisplay}
-      </a>
-    </Magnetic>
-  );
-}
+// Client: shows the previewed business's number on /for/<token>
+export { CallButton } from "./CallButton";
 
 /** Spec callout: mono label with a leader line, like a technical drawing annotation. */
 export function Callout({ children, className, dir = "right" }: { children: ReactNode; className?: string; dir?: "left" | "right" }) {

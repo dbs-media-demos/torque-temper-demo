@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from "@/lib/gsap";
 import { Eyebrow } from "@/components/ui/Bits";
 import { Camera, Check, Shield } from "@/components/ui/Icons";
+import { useBiz } from "@/components/preview/BizContext";
+import { initialsOf } from "@/lib/biz";
 
 const steps = [
   { icon: Camera, title: "Measured and photographed", text: "Pad thickness, tread depth, leak location. You see what the tech sees." },
@@ -17,6 +19,7 @@ const steps = [
  * Desktop pins the phone and scrubs the messages in; phones reveal them on enter.
  */
 export function PhotoApproval() {
+  const biz = useBiz();
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -76,16 +79,18 @@ export function PhotoApproval() {
           <div className="relative w-full max-w-[360px] rounded-[2.6rem] bg-asphalt p-2.5 shadow-[0_40px_90px_-30px_rgba(14,15,17,0.55)]">
             <div className="flex h-[700px] flex-col overflow-hidden rounded-[2.1rem] bg-[#141518] text-chalk">
               <div className="flex items-center gap-3 border-b border-white/10 px-5 pb-3 pt-5">
-                <span className="grid size-9 place-items-center rounded-full bg-signal font-display text-sm font-extrabold text-asphalt [--wdth:110]">T&amp;T</span>
+                <span className="grid size-9 place-items-center rounded-full bg-signal font-display text-sm font-extrabold text-asphalt [--wdth:110]">{biz.preview ? initialsOf(biz.shortName) : "T&T"}</span>
                 <span className="flex flex-col leading-tight">
-                  <span className="text-sm font-medium">Torque &amp; Temper</span>
-                  <span className="text-[0.7rem] text-chalk/70">Dana · Service advisor</span>
+                  <span className="text-sm font-medium">{biz.preview ? biz.shortName : "Torque & Temper"}</span>
+                  <span className="text-[0.7rem] text-chalk/70">{biz.preview ? "Service advisor" : "Dana · Service advisor"}</span>
                 </span>
                 <span className="ml-auto font-mono text-[0.62rem] uppercase tracking-[0.14em] text-chalk/70">9:42 am</span>
               </div>
               <div className="flex flex-1 flex-col gap-2.5 overflow-hidden px-3.5 py-4 text-[0.84rem] leading-snug">
                 <div data-msg className="shrink-0 max-w-[85%] self-start rounded-2xl rounded-bl-md bg-graphite-2 px-3.5 py-2.5">
-                  Hi Marisol, it&apos;s Dana at Torque &amp; Temper. Diego has your CR-V on the lift. Here&apos;s what he found:
+                  {biz.preview
+                    ? `Hi Marisol, it's ${biz.shortName}. Your CR-V is on the lift. Here's what we found:`
+                    : "Hi Marisol, it's Dana at Torque & Temper. Diego has your CR-V on the lift. Here's what he found:"}
                 </div>
                 <figure data-msg className="shrink-0 relative w-[78%] self-start overflow-hidden rounded-2xl rounded-bl-md">
                   <Image src="/images/brake-rotor-red.jpg" alt="Photo sent to the customer: a worn front brake pad and rotor" width={400} height={300} sizes="280px" className="h-36 w-full object-cover" quality={60} />

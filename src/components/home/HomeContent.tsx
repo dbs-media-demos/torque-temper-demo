@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { Hero } from "@/components/home/Hero";
 import { TrustStrip } from "@/components/home/TrustStrip";
@@ -16,28 +17,24 @@ import { CtaBand } from "@/components/sections/CtaBand";
 import { StretchHeading } from "@/components/ui/StretchHeading";
 import { Eyebrow } from "@/components/ui/Bits";
 import { ArrowRight } from "@/components/ui/Icons";
-import { JsonLd } from "@/components/seo/JsonLd";
 import { services } from "@/content/services";
 import { areas } from "@/content/areas";
 import { generalFaqs } from "@/content/general";
-import { buildMetadata } from "@/lib/seo";
-import { graph, webPageSchema } from "@/lib/schema";
-import { site } from "@/lib/site";
-
-const title = `${site.name} | Honest Auto Repair in East Dallas, TX`;
-const description =
-  "Family-owned, ASE-certified auto repair in East Dallas since 2009. Photos before any work, upfront prices, 24-month/24,000-mile warranty. Serving Lakewood, Lake Highlands, Garland and Mesquite.";
-
-export const metadata = buildMetadata({ title, description, path: "/", absoluteTitle: true, eyebrow: "East Dallas · since 2009" });
+import { defaultBiz, type Biz } from "@/lib/biz";
+import { PreviewMap } from "@/components/preview/PreviewMap";
 
 const homeFaqs = [generalFaqs[0].items[0], generalFaqs[1].items[0], generalFaqs[2].items[0], generalFaqs[2].items[2]];
 
-export default function HomePage() {
+/**
+ * The homepage sections. The concept site renders them as is; a personalised preview
+ * (/for/<token>) passes the real business, and the service-area block becomes their map.
+ */
+export function HomeContent({ biz = defaultBiz, children }: { biz?: Biz; children?: ReactNode }) {
   return (
     <PageShell>
-      <JsonLd data={graph(webPageSchema({ path: "/", name: title, description, image: "/images/hero-poster.jpg" }))} />
+      {children}
       <Hero />
-      <TrustStrip />
+      <TrustStrip biz={biz} />
       <PhotoApproval />
 
       {/* What we fix */}
@@ -93,8 +90,12 @@ export default function HomePage() {
 
       <DayInBays />
       <PriceWall />
-      <ReviewsMarquee />
+      <ReviewsMarquee biz={biz} />
 
+      {biz.preview ? (
+        <PreviewMap biz={biz} />
+      ) : (
+        <>
       {/* Service area */}
       <section aria-labelledby="area-title" className="theme-chalk py-24 lg:py-32">
         <div className="wrap grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
@@ -123,6 +124,8 @@ export default function HomePage() {
           <AreaMap />
         </div>
       </section>
+        </>
+      )}
 
       <Amenities />
 

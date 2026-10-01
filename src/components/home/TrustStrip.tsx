@@ -1,16 +1,36 @@
 import { Odometer } from "@/components/ui/Odometer";
 import { makes } from "@/content/general";
 import { site } from "@/lib/site";
+import { defaultBiz, openDays, type Biz } from "@/lib/biz";
 
-const stats = [
-  { value: "24", unit: "months", label: "or 24,000 miles warranty, parts and labor" },
+const warranty = { value: "24", unit: "months", label: "or 24,000 miles warranty, parts and labor" };
+
+const conceptStats = [
+  warranty,
   { value: String(2026 - site.founded), unit: "years", label: "fixing cars off Garland Road" },
   { value: site.carsServiced.toLocaleString("en-US"), unit: "cars", label: "serviced and road-tested" },
   { value: String(site.rating.value), unit: "stars", label: `average from ${site.rating.count} Google reviews` },
 ];
 
+/** A preview only states what's true of the real business (its Google rating and hours). */
+function previewStats(biz: Biz) {
+  const days = openDays(biz);
+  return [
+    ...(biz.rating
+      ? [
+          { value: String(biz.rating.value), unit: "stars", label: "average rating on Google" },
+          { value: String(biz.rating.count), unit: "reviews", label: `from drivers in ${biz.area}` },
+        ]
+      : []),
+    ...(days ? [{ value: String(days), unit: "days", label: "a week, open for walk-ins and bookings" }] : []),
+    { value: "60", unit: "seconds", label: "to book a repair online, day or night" },
+    warranty,
+  ].slice(0, 4);
+}
+
 /** Warranty + proof counters rolling like odometer digits, then a marquee of makes we service. */
-export function TrustStrip() {
+export function TrustStrip({ biz = defaultBiz }: { biz?: Biz }) {
+  const stats = biz.preview ? previewStats(biz) : conceptStats;
   return (
     <section aria-label="Warranty and track record" className="theme-dark border-y border-line">
       <div className="wrap grid grid-cols-2 lg:grid-cols-4">

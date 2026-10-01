@@ -3,32 +3,41 @@ import { reviews } from "@/content/reviews";
 import { ReviewCard } from "@/components/sections/ReviewCard";
 import { Eyebrow, Stars } from "@/components/ui/Bits";
 import { Google, ArrowRight } from "@/components/ui/Icons";
-import { site } from "@/lib/site";
+import { defaultBiz, scrub, type Biz } from "@/lib/biz";
 
 /** Google-style rating header + two counter-scrolling rows of review cards (pause on hover). */
-export function ReviewsMarquee() {
-  const rowA = reviews.slice(0, 6);
-  const rowB = reviews.slice(6);
+export function ReviewsMarquee({ biz = defaultBiz }: { biz?: Biz }) {
+  // A preview's cards are samples: the brand and staff names in them come out
+  const all = reviews.map((r) => ({ ...r, text: scrub(r.text, biz), area: biz.preview ? biz.area : r.area }));
+  const rowA = all.slice(0, 6);
+  const rowB = all.slice(6);
   return (
     <section aria-labelledby="reviews-title" className="theme-graphite overflow-hidden py-24 lg:py-32">
       <div className="wrap grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
         <div>
           <Eyebrow>Reviews</Eyebrow>
           <h2 id="reviews-title" className="t-h2 mt-5 max-w-[14ch]">
-            Dallas drivers say it better than we can.
+            {biz.preview ? `${biz.address.city || biz.area} drivers` : "Dallas drivers"} say it better than we can.
           </h2>
         </div>
+        {biz.rating && (
         <div className="flex items-center gap-5">
           <Google width={40} height={40} />
           <div>
             <p className="flex items-center gap-3">
-              <span className="font-display text-6xl font-extrabold leading-none [--wdth:80]">{site.rating.value}</span>
-              <Stars />
+              <span className="font-display text-6xl font-extrabold leading-none [--wdth:80]">{biz.rating.value}</span>
+              <Stars value={biz.rating.value} />
             </p>
-            <p className="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-muted">{site.rating.count} reviews on Google</p>
+            <p className="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-muted">{biz.rating.count} reviews on Google</p>
           </div>
         </div>
+        )}
       </div>
+      {biz.preview && (
+        <p className="wrap mt-6 max-w-2xl text-sm text-muted">
+          Sample reviews. On your live site this shows your latest Google reviews, updated automatically.
+        </p>
+      )}
 
       <div className="mt-14 flex flex-col gap-4 [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
         {[rowA, rowB].map((row, r) => (

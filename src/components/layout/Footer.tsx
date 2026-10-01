@@ -5,27 +5,39 @@ import { services } from "@/content/services";
 import { areas } from "@/content/areas";
 import { footerNav } from "./nav";
 import { fmtTime } from "@/lib/hours";
-import { fullAddress, site, telHref } from "@/lib/site";
+import { site } from "@/lib/site";
+import { defaultBiz, telOf, type Biz } from "@/lib/biz";
 
-export function Footer() {
+const DAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+export function Footer({ biz = defaultBiz }: { biz?: Biz }) {
+  const telHref = telOf(biz);
   return (
     <footer className="theme-dark relative overflow-hidden border-t border-line pb-28 md:pb-10">
       <div className="wrap grid gap-12 pt-20 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
         <div className="flex flex-col gap-6">
           <LogoMark className="size-14 text-chalk" />
           <p className="max-w-sm text-lg leading-snug text-fg">
-            Family-owned auto repair in East Dallas since {site.founded}. Photos before any work, prices that match the invoice.
+            {biz.preview ? `${biz.name}: auto repair in ${biz.area}.` : `Family-owned auto repair in East Dallas since ${site.founded}.`} Photos before any work, prices that match the invoice.
           </p>
           <address className="not-italic text-muted">
-            {fullAddress}
-            <br />
-            <a href={telHref} className="heat-link text-fg">
-              {site.phoneDisplay}
-            </a>
-            <br />
-            <a href={`mailto:${site.email}`} className="heat-link">
-              {site.email}
-            </a>
+            {biz.address.full}
+            {biz.phone && (
+              <>
+                <br />
+                <a href={telHref} className="heat-link text-fg">
+                  {biz.phoneDisplay}
+                </a>
+              </>
+            )}
+            {!biz.preview && (
+              <>
+                <br />
+                <a href={`mailto:${site.email}`} className="heat-link">
+                  {site.email}
+                </a>
+              </>
+            )}
           </address>
           <OpenBadge className="text-muted" />
         </div>
@@ -55,7 +67,7 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            {col.title === "Help" && (
+            {col.title === "Help" && !biz.preview && (
               <>
                 <p className="t-eyebrow mt-10 text-faint">Areas we serve</p>
                 <ul className="mt-5 flex flex-col gap-2.5">
@@ -75,12 +87,12 @@ export function Footer() {
 
       <div className="wrap mt-16 grid gap-6 border-t border-line pt-8 md:grid-cols-3">
         <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 font-mono text-xs uppercase tracking-[0.12em] text-muted md:col-span-2 md:grid-cols-[auto_1fr_auto_1fr]">
-          {site.hours
+          {(biz.hours ?? [])
             .slice(1)
-            .concat(site.hours[0])
+            .concat(biz.hours ? biz.hours[0] : [])
             .map((h) => (
               <div key={h.day} className="contents">
-                <dt className="text-faint">{h.label.slice(0, 3)}</dt>
+                <dt className="text-faint">{DAY[h.day]}</dt>
                 <dd>{h.open && h.close ? `${fmtTime(h.open)} – ${fmtTime(h.close)}` : "Closed"}</dd>
               </div>
             ))}
@@ -102,13 +114,15 @@ export function Footer() {
           className="font-display fill-current font-black uppercase [--wdth:62]"
           style={{ fontSize: 160 }}
         >
-          Torque&amp;Temper
+          {biz.preview ? biz.shortName : "Torque&Temper"}
         </text>
       </svg>
 
       <div className="wrap mt-8 flex flex-col gap-3 border-t border-line pt-6 text-sm text-faint md:flex-row md:items-center md:justify-between">
         <p>
-          © {new Date().getFullYear()} {site.name}. A concept site: the business is fictional.
+          {biz.preview
+            ? `© ${new Date().getFullYear()} ${biz.name}. A preview homepage made for ${biz.name}.`
+            : `© ${new Date().getFullYear()} ${site.name}. A concept site: the business is fictional.`}
         </p>
         <p>
           Design &amp; development:{" "}

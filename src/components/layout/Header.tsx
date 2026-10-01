@@ -10,9 +10,12 @@ import { OpenBadge } from "@/components/ui/OpenBadge";
 import { Phone, Close, ArrowRight } from "@/components/ui/Icons";
 import { services } from "@/content/services";
 import { mainNav } from "./nav";
-import { site, telHref } from "@/lib/site";
+import { useBiz } from "@/components/preview/BizContext";
+import { telOf } from "@/lib/biz";
 
 export function Header() {
+  const biz = useBiz();
+  const telHref = telOf(biz);
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -79,7 +82,7 @@ export function Header() {
           )}
         />
         <div className="wrap flex h-[var(--header-h)] items-center justify-between gap-6">
-          <Link href="/" aria-label={`${site.name}, home`} className="shrink-0">
+          <Link href="/" aria-label={`${biz.name}, home`} className="shrink-0">
             <Logo />
           </Link>
 
@@ -120,7 +123,7 @@ export function Header() {
             </span>
             <a href={telHref} className="t-eyebrow hidden items-center gap-2 whitespace-nowrap px-2 py-2 text-fg transition-colors hover:text-signal xl:inline-flex">
               <Phone className="text-signal" />
-              {site.phoneDisplay}
+              {biz.phoneDisplay}
             </a>
             <Link href="/book" className="btn btn-signal hidden !min-h-11 sm:inline-flex">
               Book now
@@ -228,7 +231,7 @@ export function Header() {
           <div className="mt-auto flex flex-col gap-3 pt-10">
             <OpenBadge className="text-muted" />
             <a href={telHref} className="btn btn-ghost w-full">
-              <Phone /> Call {site.phoneDisplay}
+              <Phone /> Call {biz.phoneDisplay}
             </a>
             <Link href="/book" className="btn btn-signal w-full">
               Book an appointment
